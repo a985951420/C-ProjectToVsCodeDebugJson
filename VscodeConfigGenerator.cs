@@ -1,6 +1,17 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text;
 
+// 定义 JSON 序列化上下文，标记需要序列化的类型
+[JsonSerializable(typeof(LaunchConfiguration))]
+[JsonSerializable(typeof(LaunchConfig))]
+[JsonSerializable(typeof(TaskItem))]
+[JsonSerializable(typeof(TasksConfig))]
+[JsonSerializable(typeof(ProjectInfo))]
+internal partial class AppJsonSerializerContext : JsonSerializerContext
+{
+    // 源代码生成器会自动填充内容
+}
 /// <summary>
 /// VSCode 配置生成工具类
 /// </summary>
@@ -46,8 +57,8 @@ static class VscodeConfigGenerator
         }).ToArray();
 
         var launchConfig = new LaunchConfig { configurations = configurations };
-        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
-        string json = JsonSerializer.Serialize(launchConfig, options);
+        // 直接传入 JsonSerializerContext 实例
+        string json = JsonSerializer.Serialize(launchConfig, typeof(LaunchConfig), AppJsonSerializerContext.Default);
         File.WriteAllText(Path.Combine(vscodeDir, "launch.json"), json, Encoding.UTF8);
     }
 
@@ -70,14 +81,16 @@ static class VscodeConfigGenerator
                     "build",
                     $"{ "${workspaceFolder}" }{relativeCsproj}",
                     "/property:GenerateFullPaths=true",
-                    "/consoleloggerparameters:NoSummary"
+                    // 修正拼写错误
+                    "/consoleLoggerParameters:NoSummary"
                 }
             };
         }).ToArray();
 
         var tasksConfig = new TasksConfig { tasks = tasks };
-        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
-        string json = JsonSerializer.Serialize(tasksConfig, options);
+        // 直接传入 JsonSerializerContext 实例
+        string json = JsonSerializer.Serialize(tasksConfig, typeof(TasksConfig), AppJsonSerializerContext.Default);
         File.WriteAllText(Path.Combine(vscodeDir, "tasks.json"), json, Encoding.UTF8);
     }
 }
+
