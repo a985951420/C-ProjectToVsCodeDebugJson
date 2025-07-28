@@ -23,10 +23,42 @@ class Program
         if (string.IsNullOrEmpty(vscodeSavePath))
             vscodeSavePath = Directory.GetCurrentDirectory();
 
+        Console.WriteLine("请输入要排除的 .csproj 文件名，多个文件名用逗号分隔（留空则不排除）：");
+        string excludeInput = Console.ReadLine();
+        var excludeList = excludeInput.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
+
+        Console.WriteLine("请输入要生成的 .csproj 文件名，多个文件名用逗号分隔（留空则生成所有文件）：");
+        string includeInput = Console.ReadLine();
+        var includeList = includeInput.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
+
         Console.WriteLine("开始生成 VSCode 调试配置...");
 
         // 查找所有 .csproj 文件
         var csprojFiles = ProjectFinder.FindAllCsprojFiles(basePath);
+        
+        // 根据排除名单和只生成名单过滤 .csproj 文件
+        csprojFiles = csprojFiles.Where(file => !excludeList.Contains(Path.GetFileName(file))).ToArray();
+        if (includeList.Count > 0)
+        {
+            var allFileNames = new List<string>();
+
+            foreach (var item in csprojFiles)
+            {
+                var fileName = Path.GetFileName(item);
+
+                foreach (var includeItem in includeList)
+                {
+                    if (fileName.Contains(includeItem))
+                    {
+                        allFileNames.Add(item);
+
+                        break;
+                    }
+                }
+            }
+            csprojFiles = allFileNames.ToArray();
+        }
+
         if (csprojFiles.Length == 0)
         {
             Console.WriteLine("错误: 未找到 .csproj 文件");
