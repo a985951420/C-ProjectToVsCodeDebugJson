@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text;
 
 // 定义 JSON 序列化上下文，标记需要序列化的类型
+[JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(LaunchConfiguration))]
 [JsonSerializable(typeof(LaunchConfig))]
 [JsonSerializable(typeof(TaskItem))]
@@ -41,14 +42,14 @@ static class VscodeConfigGenerator
         {
             string projectDir = Path.GetDirectoryName(p.CsprojFile)!;
             string relativeDir = projectDir.Replace(basePath, string.Empty).Replace("\\", "/");
-            string programPath = $"{ "${workspaceFolder}" }{relativeDir}/{p.OutputPath}/{p.AssemblyName}.dll".Replace("\\", "/");
+            string programPath = $"{"${workspaceFolder}"}{relativeDir}/{p.OutputPath}/{p.AssemblyName}.dll".Replace("\\", "/");
 
             return new LaunchConfiguration
             {
                 name = p.LaunchName,
                 program = programPath,
                 preLaunchTask = p.LaunchName,
-                cwd = $"{ "${workspaceFolder}" }{relativeDir}".Replace("\\", "/"),
+                cwd = $"{"${workspaceFolder}"}{relativeDir}".Replace("\\", "/"),
                 sourceFileMap = new Dictionary<string, string>
                 {
                     { "/Views", Path.Combine("${workspaceFolder}", relativeDir, "Views").Replace("\\", "/") }
