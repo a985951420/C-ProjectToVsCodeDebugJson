@@ -60,10 +60,10 @@ class Program
 
     private static List<ProjectInfo> ParseProjectFiles(string[] csprojFiles)
     {
-        return csprojFiles
-            .Select(csprojFile => CsprojParser.Parse(csprojFile))
+        return [.. csprojFiles
+            .Select(CsprojParser.Parse)
             .Where(info => info != null)
-            .ToList();
+            .Cast<ProjectInfo>()];
     }
 
     private static void GenerateVscodeConfigs(string vscodeSavePath, List<ProjectInfo> projectInfos, string basePath)
@@ -76,15 +76,15 @@ class Program
     private static string GetUserInput(string prompt, string defaultValue)
     {
         Console.WriteLine(prompt);
-        string input = Console.ReadLine();
+        string input = Console.ReadLine() ?? string.Empty;
         return string.IsNullOrEmpty(input) ? defaultValue : input;
     }
 
     private static List<string> GetUserInputList(string prompt, List<string> defaultList)
     {
         Console.WriteLine(prompt);
-        string input = Console.ReadLine();
-        return string.IsNullOrEmpty(input) ? defaultList : input.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
+        string input = Console.ReadLine() ?? string.Empty;
+        return string.IsNullOrEmpty(input) ? defaultList : input.Split([','], StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
     }
 
     private static List<string> ReadDefaultIncludeList()
@@ -92,7 +92,7 @@ class Program
         if (File.Exists(ConfigFilePath))
         {
             string content = File.ReadAllText(ConfigFilePath);
-            return content.Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
+            return content.Split([',', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
         }
         return new List<string>();
     }
@@ -114,10 +114,10 @@ class Program
                 Console.WriteLine($"{i + 1}. {projects[i]}");
             }
             Console.WriteLine("请输入要生成的项目编号，多个编号用逗号分隔（留空则不选择任何项目）：");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine() ?? string.Empty;
             if (!string.IsNullOrEmpty(input))
             {
-                var selectedIndices = input.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                var selectedIndices = input.Split([','], StringSplitOptions.RemoveEmptyEntries)
                                         .Select(s =>
                                         {
                                             if (int.TryParse(s.Trim(), out int index) && index > 0 && index <= projects.Count)
@@ -135,10 +135,10 @@ class Program
 
         // 添加手动输入新 .csproj 项目的入口
         Console.WriteLine("若要手动添加新的 .csproj 项目，多个项目用逗号分隔（留空则跳过）：");
-        string manualInput = Console.ReadLine();
+        string manualInput = Console.ReadLine() ?? string.Empty;
         if (!string.IsNullOrEmpty(manualInput))
         {
-            var manualProjects = manualInput.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            var manualProjects = manualInput.Split([','], StringSplitOptions.RemoveEmptyEntries)
                                         .Select(name => name.Trim())
                                         .ToList();
             selectedProjects.AddRange(manualProjects);

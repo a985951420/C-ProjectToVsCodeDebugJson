@@ -9,11 +9,11 @@ internal class LaunchConfig
 
 internal class LaunchConfiguration
 {
-    public string name { get; set; }
+    public required string name { get; set; }
     public string type { get; set; } = "coreclr";
     public string request { get; set; } = "launch";
     public string preLaunchTask { get; set; } = "build";
-    public string program { get; set; }
+    public required string program { get; set; }
     public string[] args { get; set; } = System.Array.Empty<string>();
     public string cwd { get; set; } = "${workspaceFolder}";
     public LaunchBrowser launchBrowser { get; set; } = new LaunchBrowser();
