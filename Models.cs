@@ -17,22 +17,32 @@ internal class LaunchConfiguration
     public string[] args { get; set; } = System.Array.Empty<string>();
     public string cwd { get; set; } = "${workspaceFolder}";
     public LaunchBrowser launchBrowser { get; set; } = new LaunchBrowser();
-    public Dictionary<string, string> env { get; set; } = new Dictionary<string, string> { { "ASPNETCORE_ENVIRONMENT", "Development" } };
-    public Dictionary<string, string> sourceFileMap { get; set; } = new Dictionary<string, string> { { "/Views", "${workspaceFolder}/Views" } };
+    public Dictionary<string, string> env { get; set; } = new() { { "ASPNETCORE_ENVIRONMENT", "Development" } };
+    public Dictionary<string, string> sourceFileMap { get; set; } = new() { { "/Views", "${workspaceFolder}/Views" } };
 }
 
 internal class LaunchBrowser
 {
     public bool enabled { get; set; } = true;
     public string args { get; set; } = "${auto-detect-url}";
-    public WindowsCommand windows { get; set; } = new WindowsCommand();
-    public OsxCommand osx { get; set; } = new OsxCommand();
-    public LinuxCommand linux { get; set; } = new LinuxCommand();
+    public WindowsCommand windows { get; set; } = new();
+    public OsxCommand osx { get; set; } = new();
+    public LinuxCommand linux { get; set; } = new();
 }
 
-internal class WindowsCommand { public string command { get; set; } = "cmd.exe"; public string args { get; set; } = "/C start ${auto-detect-url}"; }
-internal class OsxCommand { public string command { get; set; } = "open"; }
-internal class LinuxCommand { public string command { get; set; } = "xdg-open"; }
+internal class WindowsCommand 
+{
+    public string command { get; set; } = "cmd.exe";
+    public string args { get; set; } = "/C start ${auto-detect-url}";
+}
+internal class OsxCommand 
+{
+    public string command { get; set; } = "open";
+}
+internal class LinuxCommand 
+{
+    public string command { get; set; } = "xdg-open";
+}
 
 /// <summary>
 /// tasks.json 配置结构体

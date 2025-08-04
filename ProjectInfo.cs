@@ -6,27 +6,27 @@ class ProjectInfo
     /// <summary>
     /// .csproj 文件路径
     /// </summary>
-    public required string CsprojFile { get; set; }
+    public required string CsprojFile { get; init; }
 
     /// <summary>
     /// 输出类型（Exe/Library）
     /// </summary>
-    public required string OutputType { get; set; }
+    public required string OutputType { get; init; }
 
     /// <summary>
     /// 目标框架
     /// </summary>
-    public required string TargetFramework { get; set; }
+    public required string TargetFramework { get; init; }
 
     /// <summary>
     /// 程序集名称
     /// </summary>
-    public required string AssemblyName { get; set; }
+    public required string AssemblyName { get; init; }
 
     /// <summary>
     /// 输出路径
     /// </summary>
-    public required string OutputPath { get; set; }
+    public required string OutputPath { get; init; }
 
     /// <summary>
     /// VSCode 调试配置名称
