@@ -12,7 +12,7 @@ class Program
     /// <summary>
     /// 应用程序主入口
     /// </summary>
-    static async Task Main()
+    static void Main()
     {
         // 设置控制台输入输出编码为 UTF-8
         Console.InputEncoding = Encoding.UTF8;
@@ -31,17 +31,16 @@ class Program
         var defaultIncludeList = ReadDefaultIncludeList();
 
         // 以勾选方式获取用户选择
-        var includeList = GetSelectedProjects(availableProjects, defaultIncludeList);
+        var includeList = GetSelectedProjects(defaultIncludeList);
 
         // 保存用户输入到配置文件
-        await SaveIncludeListToConfigAsync(includeList);
+        SaveIncludeListToConfig(includeList);
 
         Console.WriteLine("开始生成 VSCode 调试配置...");
 
-        csprojFiles = csprojFiles
+        csprojFiles = [.. csprojFiles
             .Where(file => !excludeList.Contains(Path.GetFileName(file)))
-            .Where(file => includeList.Count == 0 || includeList.Any(include => Path.GetFileName(file).Contains(include)))
-            .ToArray();
+            .Where(file => includeList.Count == 0 || includeList.Any(include => Path.GetFileName(file).Contains(include)))];
 
         if (csprojFiles.Length == 0)
         {
@@ -50,41 +49,41 @@ class Program
         }
 
         // 解析所有项目文件
-        var projectInfos = await ParseProjectFilesAsync(csprojFiles);
+        var projectInfos = ParseProjectFiles(csprojFiles, basePath);
 
         // 生成 VSCode 配置文件
-        await GenerateVscodeConfigsAsync(vscodeSavePath, projectInfos, basePath);
+        GenerateVscodeConfigs(vscodeSavePath, projectInfos, basePath);
 
         Console.WriteLine("VSCode 调试配置已成功生成。");
     }
 
-    private static async Task<List<ProjectInfo>> ParseProjectFilesAsync(string[] csprojFiles)
+    private static List<ProjectInfo> ParseProjectFiles(string[] csprojFiles, string basePath)
     {
-        var tasks = csprojFiles.Select(file => Task.Run(() => CsprojParser.Parse(file)));
-        var results = await Task.WhenAll(tasks);
-        return results.Where(info => info != null).Cast<ProjectInfo>().ToList();
+        return [.. csprojFiles
+            .Select(s=>CsprojParser.Parse(s,basePath))
+            .Where(info => info != null)
+            .Cast<ProjectInfo>()];
     }
 
-    private static async Task GenerateVscodeConfigsAsync(string vscodeSavePath, List<ProjectInfo> projectInfos, string basePath)
+    private static void GenerateVscodeConfigs(string vscodeSavePath, List<ProjectInfo> projectInfos, string basePath)
     {
         var vscodeDir = VscodeConfigGenerator.CreateVscodeDirectory(vscodeSavePath);
-        await Task.WhenAll(
-            Task.Run(() => VscodeConfigGenerator.GenerateLaunchJson(vscodeDir, projectInfos, basePath)),
-            Task.Run(() => VscodeConfigGenerator.GenerateTasksJson(vscodeDir, projectInfos, basePath))
-        );
+        VscodeConfigGenerator.GenerateLaunchJson(vscodeDir, projectInfos, basePath);
+        VscodeConfigGenerator.GenerateTasksJson(vscodeDir, projectInfos, basePath);
     }
 
     private static string GetUserInput(string prompt, string defaultValue)
     {
         Console.WriteLine(prompt);
-        return Console.ReadLine()?.Trim() ?? defaultValue;
+        string input = Console.ReadLine() ?? string.Empty;
+        return string.IsNullOrEmpty(input) ? defaultValue : input;
     }
 
     private static List<string> GetUserInputList(string prompt, List<string> defaultList)
     {
         Console.WriteLine(prompt);
-        string input = Console.ReadLine()?.Trim() ?? string.Empty;
-        return string.IsNullOrEmpty(input) ? defaultList : input.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
+        string input = Console.ReadLine() ?? string.Empty;
+        return string.IsNullOrEmpty(input) ? defaultList : input.Split([','], StringSplitOptions.RemoveEmptyEntries).Select(name => name.Trim()).ToList();
     }
 
     private static List<string> ReadDefaultIncludeList()
@@ -100,38 +99,27 @@ class Program
     /// <summary>
     /// 让用户以勾选方式选择项目，并提供手动输入入口
     /// </summary>
-    /// <param name="allProjects">所有可选项目</param>
-    /// <param name="defaultProjects">默认选中的项目</param>
+    /// <param name="projects">所有可选项目</param>
     /// <returns>用户选择的项目列表</returns>
-    private static List<string> GetSelectedProjects(List<string> allProjects, List<string> defaultProjects)
+    private static List<string> GetSelectedProjects(List<string> projects)
     {
         var selectedProjects = new List<string>();
 
-        if (allProjects.Count > 0)
+        if (projects.Count > 0)
         {
-            Console.WriteLine("可用的 .csproj 项目:");
-            for (int i = 0; i < allProjects.Count; i++)
+            Console.WriteLine("配置文件中的可用 .csproj 项目:");
+            for (int i = 0; i < projects.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {allProjects[i]}");
+                Console.WriteLine($"{i + 1}. {projects[i]}");
             }
-
-            if (defaultProjects.Count > 0)
-            {
-                Console.WriteLine("配置文件中的默认项目:");
-                foreach (var project in defaultProjects)
-                {
-                    Console.WriteLine($"- {project}");
-                }
-            }
-
             Console.WriteLine("请输入要生成的项目编号，多个编号用逗号分隔（留空则不选择任何项目）：");
-            string input = Console.ReadLine()?.Trim() ?? string.Empty;
+            string input = Console.ReadLine() ?? string.Empty;
             if (!string.IsNullOrEmpty(input))
             {
-                var selectedIndices = input.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                var selectedIndices = input.Split([','], StringSplitOptions.RemoveEmptyEntries)
                                         .Select(s =>
                                         {
-                                            if (int.TryParse(s.Trim(), out int index) && index > 0 && index <= allProjects.Count)
+                                            if (int.TryParse(s.Trim(), out int index) && index > 0 && index <= projects.Count)
                                             {
                                                 return index - 1;
                                             }
@@ -140,16 +128,16 @@ class Program
                                         .Where(index => index >= 0)
                                         .ToList();
 
-                selectedProjects.AddRange(selectedIndices.Select(index => allProjects[index]));
+                selectedProjects.AddRange(selectedIndices.Select(index => projects[index]));
             }
         }
 
         // 添加手动输入新 .csproj 项目的入口
         Console.WriteLine("若要手动添加新的 .csproj 项目，多个项目用逗号分隔（留空则跳过）：");
-        string manualInput = Console.ReadLine()?.Trim() ?? string.Empty;
+        string manualInput = Console.ReadLine() ?? string.Empty;
         if (!string.IsNullOrEmpty(manualInput))
         {
-            var manualProjects = manualInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            var manualProjects = manualInput.Split([','], StringSplitOptions.RemoveEmptyEntries)
                                         .Select(name => name.Trim())
                                         .ToList();
             selectedProjects.AddRange(manualProjects);
@@ -159,10 +147,10 @@ class Program
     }
 
     /// <summary>
-    /// 将包含的项目列表异步保存到配置文件
+    /// 将包含的项目列表保存到配置文件
     /// </summary>
     /// <param name="includeList">要保存的项目列表</param>
-    private static async Task SaveIncludeListToConfigAsync(List<string> includeList)
+    private static void SaveIncludeListToConfig(List<string> includeList)
     {
         // 读取现有配置
         var existingList = ReadDefaultIncludeList();
@@ -172,6 +160,6 @@ class Program
 
         // 将合并后的列表写入配置文件
         string content = string.Join(",", combinedList);
-        await File.WriteAllTextAsync(ConfigFilePath, content, Encoding.UTF8);
+        File.WriteAllText(ConfigFilePath, content, Encoding.UTF8);
     }
 }

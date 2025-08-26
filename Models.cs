@@ -3,45 +3,88 @@
 /// </summary>
 internal class LaunchConfig
 {
-    public string version { get; set; } = "0.2.0";
-    public LaunchConfiguration[] configurations { get; set; } = System.Array.Empty<LaunchConfiguration>();
+    public string version { get; set; }
+    public LaunchConfiguration[] configurations { get; set; }
+
+    public LaunchConfig()
+    {
+        version = "0.2.0";
+        configurations = System.Array.Empty<LaunchConfiguration>();
+    }
 }
 
 internal class LaunchConfiguration
 {
     public required string name { get; set; }
-    public string type { get; set; } = "coreclr";
-    public string request { get; set; } = "launch";
-    public string preLaunchTask { get; set; } = "build";
+    public string type { get; set; }
+    public string request { get; set; }
+    public string preLaunchTask { get; set; }
     public required string program { get; set; }
-    public string[] args { get; set; } = System.Array.Empty<string>();
-    public string cwd { get; set; } = "${workspaceFolder}";
-    public LaunchBrowser launchBrowser { get; set; } = new LaunchBrowser();
-    public Dictionary<string, string> env { get; set; } = new() { { "ASPNETCORE_ENVIRONMENT", "Development" } };
-    public Dictionary<string, string> sourceFileMap { get; set; } = new() { { "/Views", "${workspaceFolder}/Views" } };
+    public string[] args { get; set; }
+    public string cwd { get; set; }
+    public LaunchBrowser launchBrowser { get; set; }
+    public Dictionary<string, string> env { get; set; }
+    public Dictionary<string, string> sourceFileMap { get; set; }
+
+    public LaunchConfiguration()
+    {
+        type = "coreclr";
+        request = "launch";
+        preLaunchTask = "build";
+        args = System.Array.Empty<string>();
+        cwd = "${workspaceFolder}";
+        launchBrowser = new LaunchBrowser();
+        env = new Dictionary<string, string> { { "ASPNETCORE_ENVIRONMENT", "Development" } };
+        sourceFileMap = new Dictionary<string, string> { { "/Views", "${workspaceFolder}/Views" } };
+    }
 }
 
 internal class LaunchBrowser
 {
-    public bool enabled { get; set; } = true;
-    public string args { get; set; } = "${auto-detect-url}";
-    public WindowsCommand windows { get; set; } = new();
-    public OsxCommand osx { get; set; } = new();
-    public LinuxCommand linux { get; set; } = new();
+    public bool enabled { get; set; }
+    public string args { get; set; }
+    public WindowsCommand windows { get; set; }
+    public OsxCommand osx { get; set; }
+    public LinuxCommand linux { get; set; }
+
+    public LaunchBrowser()
+    {
+        enabled = true;
+        args = "${auto-detect-url}";
+        windows = new WindowsCommand();
+        osx = new OsxCommand();
+        linux = new LinuxCommand();
+    }
 }
 
 internal class WindowsCommand 
 {
-    public string command { get; set; } = "cmd.exe";
-    public string args { get; set; } = "/C start ${auto-detect-url}";
+    public string command { get; set; }
+    public string args { get; set; }
+
+    public WindowsCommand()
+    {
+        command = "cmd.exe";
+        args = "/C start ${auto-detect-url}";
+    }
 }
 internal class OsxCommand 
 {
-    public string command { get; set; } = "open";
+    public string command { get; set; }
+
+    public OsxCommand()
+    {
+        command = "open";
+    }
 }
 internal class LinuxCommand 
 {
-    public string command { get; set; } = "xdg-open";
+    public string command { get; set; }
+
+    public LinuxCommand()
+    {
+        command = "xdg-open";
+    }
 }
 
 /// <summary>
@@ -49,15 +92,30 @@ internal class LinuxCommand
 /// </summary>
 internal class TasksConfig
 {
-    public string version { get; set; } = "2.0.0";
-    public TaskItem[] tasks { get; set; } = System.Array.Empty<TaskItem>();
+    public string version { get; set; }
+    public TaskItem[] tasks { get; set; }
+
+    public TasksConfig()
+    {
+        version = "2.0.0";
+        tasks = System.Array.Empty<TaskItem>();
+    }
 }
 
 internal class TaskItem
 {
-    public string label { get; set; } = "build";
-    public string command { get; set; } = "dotnet";
-    public string type { get; set; } = "process";
-    public string[] args { get; set; } = System.Array.Empty<string>();
-    public string problemMatcher { get; set; } = "${msCompile}";
+    public string label { get; set; }
+    public string command { get; set; }
+    public string type { get; set; }
+    public string[] args { get; set; }
+    public string problemMatcher { get; set; }
+
+    public TaskItem()
+    {
+        label = "build";
+        command = "dotnet";
+        type = "process";
+        args = System.Array.Empty<string>();
+        problemMatcher = "${msCompile}";
+    }
 }
