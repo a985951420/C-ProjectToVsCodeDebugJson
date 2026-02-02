@@ -70,13 +70,10 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     private async System.Threading.Tasks.Task ShowAboutAsync()
     {
-        await _dialogService.ShowInformationAsync(
-            "VsCode 调试配置生成工具 v3.0\n\n" +
-            "自动扫描 .NET 项目并生成 VSCode 调试配置文件。\n\n" +
-            "版本: 3.0.0\n" +
-            "框架: .NET 8.0 + Avalonia 11.x\n\n" +
-            "© 2026 VsCodeDebugGen",
-            "关于");
+        // 切换到关于标签页（索引 3）
+        SelectedTabIndex = 3;
+        _loggingService.Log("已切换到关于页面", Models.LogLevel.Info);
+        await System.Threading.Tasks.Task.CompletedTask;
     }
 
     /// <summary>

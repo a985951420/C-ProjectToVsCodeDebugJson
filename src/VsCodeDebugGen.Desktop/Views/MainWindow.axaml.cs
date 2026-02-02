@@ -35,5 +35,12 @@ public partial class MainWindow : Window
             DataContext = logViewModel
         };
         LogViewContent.Content = logView;
+
+        var aboutViewModel = App.Services.GetRequiredService<AboutViewModel>();
+        var aboutView = new AboutView
+        {
+            DataContext = aboutViewModel
+        };
+        AboutViewContent.Content = aboutView;
     }
 }

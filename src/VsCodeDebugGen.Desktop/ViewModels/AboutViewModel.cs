@@ -1,0 +1,233 @@
+using ReactiveUI;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reactive;
+using System.Threading.Tasks;
+using VsCodeDebugGen.Desktop.Models;
+using VsCodeDebugGen.Desktop.Services.Interfaces;
+using VsCodeDebugGen.Desktop.ViewModels.Base;
+
+namespace VsCodeDebugGen.Desktop.ViewModels;
+
+/// <summary>
+/// 关于页面 ViewModel
+/// </summary>
+public class AboutViewModel : ViewModelBase
+{
+    private readonly ILoggingService _loggingService;
+    private ObservableCollection<DocumentItem> _documents = new();
+    private DocumentItem? _selectedDocument;
+    private string _documentContent = string.Empty;
+
+    /// <summary>
+    /// 文档列表
+    /// </summary>
+    public ObservableCollection<DocumentItem> Documents
+    {
+        get => _documents;
+        set => this.RaiseAndSetIfChanged(ref _documents, value);
+    }
+
+    /// <summary>
+    /// 选中的文档
+    /// </summary>
+    public DocumentItem? SelectedDocument
+    {
+        get => _selectedDocument;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _selectedDocument, value);
+            if (value != null)
+            {
+                _ = LoadDocumentContentAsync(value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 文档内容
+    /// </summary>
+    public string DocumentContent
+    {
+        get => _documentContent;
+        set => this.RaiseAndSetIfChanged(ref _documentContent, value);
+    }
+
+    /// <summary>
+    /// 刷新文档列表命令
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
+
+    /// <summary>
+    /// 初始化关于页面 ViewModel
+    /// </summary>
+    /// <param name="loggingService">日志服务</param>
+    public AboutViewModel(ILoggingService loggingService)
+    {
+        _loggingService = loggingService;
+
+        Title = "关于";
+
+        // 初始化命令
+        RefreshCommand = ReactiveCommand.CreateFromTask(LoadDocumentsAsync);
+
+        // 加载文档列表
+        _ = LoadDocumentsAsync();
+    }
+
+    /// <summary>
+    /// 加载文档列表
+    /// </summary>
+    private async Task LoadDocumentsAsync()
+    {
+        IsBusy = true;
+
+        try
+        {
+            Documents.Clear();
+            DocumentContent = string.Empty;
+
+            // 获取程序根目录
+            var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var docsDirectory = Path.Combine(appDirectory, "docs");
+
+            // 如果 docs 目录不存在于发布目录，尝试查找源代码目录
+            if (!Directory.Exists(docsDirectory))
+            {
+                // 尝试向上查找项目根目录
+                var currentDir = new DirectoryInfo(appDirectory);
+                while (currentDir != null && currentDir.Name != "C-ProjectToVsCodeDebugJson")
+                {
+                    currentDir = currentDir.Parent;
+                }
+
+                if (currentDir != null)
+                {
+                    docsDirectory = Path.Combine(currentDir.FullName, "docs");
+                }
+            }
+
+            if (!Directory.Exists(docsDirectory))
+            {
+                _loggingService.Log($"文档目录不存在: {docsDirectory}", LogLevel.Warning);
+                DocumentContent = "# 文档目录不存在\n\n无法找到 docs 目录，请检查程序安装是否完整。";
+                return;
+            }
+
+            // 读取所有 md 文件
+            var mdFiles = Directory.GetFiles(docsDirectory, "*.md", SearchOption.AllDirectories);
+
+            foreach (var filePath in mdFiles.OrderBy(f => f))
+            {
+                var fileName = Path.GetFileName(filePath);
+                var displayName = GetDisplayName(fileName);
+
+                Documents.Add(new DocumentItem
+                {
+                    FileName = fileName,
+                    DisplayName = displayName,
+                    FilePath = filePath
+                });
+            }
+
+            _loggingService.Log($"已加载 {Documents.Count} 个文档", LogLevel.Info);
+
+            // 默认选中第一个文档
+            if (Documents.Count > 0)
+            {
+                SelectedDocument = Documents[0];
+            }
+            else
+            {
+                DocumentContent = "# 欢迎使用 VsCode 调试配置生成工具\n\n" +
+                                "版本: 3.0.0\n" +
+                                "框架: .NET 8.0 + Avalonia 11.x\n\n" +
+                                "© 2026 VsCodeDebugGen";
+            }
+        }
+        catch (Exception ex)
+        {
+            _loggingService.Log($"加载文档失败: {ex.Message}", LogLevel.Error);
+            DocumentContent = $"# 加载失败\n\n{ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// 加载文档内容
+    /// </summary>
+    /// <param name="document">文档项</param>
+    private async Task LoadDocumentContentAsync(DocumentItem document)
+    {
+        try
+        {
+            if (File.Exists(document.FilePath))
+            {
+                DocumentContent = await File.ReadAllTextAsync(document.FilePath);
+                _loggingService.Log($"已加载文档: {document.DisplayName}", LogLevel.Info);
+            }
+            else
+            {
+                DocumentContent = $"# 文件不存在\n\n无法找到文件: {document.FileName}";
+                _loggingService.Log($"文档文件不存在: {document.FilePath}", LogLevel.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            _loggingService.Log($"读取文档失败: {ex.Message}", LogLevel.Error);
+            DocumentContent = $"# 读取失败\n\n{ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// 获取友好的显示名称
+    /// </summary>
+    /// <param name="fileName">文件名</param>
+    /// <returns>显示名称</returns>
+    private string GetDisplayName(string fileName)
+    {
+        var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+
+        // 常见文档名称映射
+        return nameWithoutExt switch
+        {
+            "QUICK_START" => "快速开始",
+            "PROJECT_SUMMARY" => "项目总结",
+            "ENVIRONMENT_SETUP" => "环境设置",
+            "完成说明" => "完成说明",
+            "RELEASE_NOTES_v2.0.0" => "版本说明 v2.0.0",
+            "DEPLOYMENT_CHECKLIST" => "部署检查清单",
+            "UPGRADE_PLAN_v3.0.0" => "升级计划 v3.0.0",
+            "SPEC" => "技术规范",
+            "TASK" => "任务列表",
+            "TASK_PROGRESS" => "任务进度",
+            _ => nameWithoutExt
+        };
+    }
+}
+
+/// <summary>
+/// 文档项
+/// </summary>
+public class DocumentItem
+{
+    /// <summary>
+    /// 文件名
+    /// </summary>
+    public string FileName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 显示名称
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 文件路径
+    /// </summary>
+    public string FilePath { get; set; } = string.Empty;
+}

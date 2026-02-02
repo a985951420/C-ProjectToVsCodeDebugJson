@@ -57,6 +57,7 @@ public partial class App : Application
         services.AddTransient<HistoryViewModel>();
         services.AddTransient<PreviewDialogViewModel>();
         services.AddTransient<TemplateEditDialogViewModel>();
+        services.AddTransient<AboutViewModel>();
 
         Services = services.BuildServiceProvider();
     }

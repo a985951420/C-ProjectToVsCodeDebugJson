@@ -47,6 +47,11 @@
                 <ContentControl x:Name="LogViewContent" />
             </TabItem>
 
+            <!-- 关于标签页 -->
+            <TabItem Header="关于">
+                <ContentControl x:Name="AboutViewContent" />
+            </TabItem>
+
         </TabControl>
 
         <!-- 底部状态栏 -->

@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.AboutView"
+             x:DataType="vm:AboutViewModel">
+
+    <Design.DataContext>
+        <vm:AboutViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="250,*" Margin="16">
+
+        <!-- 左侧：文档列表 -->
+        <Border Grid.Column="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Margin="0,0,8,0">
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <!-- 标题 -->
+                <TextBlock Grid.Row="0"
+                           Text="文档列表"
+                           Classes="SubtitleTextBlock"
+                           Margin="16,16,16,12" />
+
+                <!-- 文档列表 -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Documents}"
+                         SelectedItem="{Binding SelectedDocument}"
+                         Margin="8"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"
+                                       Padding="8,6"
+                                       TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- 刷新按钮 -->
+                <Button Grid.Row="2"
+                        Content="刷新列表"
+                        Command="{Binding RefreshCommand}"
+                        Classes="SecondaryButton"
+                        HorizontalAlignment="Stretch"
+                        Margin="8,8,8,12"
+                        IsEnabled="{Binding !IsBusy}" />
+
+            </Grid>
+        </Border>
+
+        <!-- 右侧：文档内容 -->
+        <Border Grid.Column="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Margin="8,0,0,0">
+            <Grid RowDefinitions="Auto,*">
+
+                <!-- 标题栏 -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource BackgroundAltBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        Padding="16,12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding SelectedDocument.DisplayName, FallbackValue='欢迎'}"
+                                   Classes="SubtitleTextBlock"
+                                   VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding SelectedDocument.FileName, FallbackValue=''}"
+                                   Classes="CaptionTextBlock"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- 文档内容区域 -->
+                <ScrollViewer Grid.Row="1"
+                              Padding="16"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Auto">
+                    <SelectableTextBlock Text="{Binding DocumentContent}"
+                                        TextWrapping="Wrap"
+                                        FontFamily="Consolas,Courier New,monospace"
+                                        FontSize="13"
+                                        LineHeight="20" />
+                </ScrollViewer>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</UserControl>
