@@ -1,0 +1,174 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.TemplateManagerView"
+             x:DataType="vm:TemplateManagerViewModel">
+
+    <Design.DataContext>
+        <vm:TemplateManagerViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*" Margin="16">
+
+        <!-- 顶部标题和操作按钮 -->
+        <Border Grid.Row="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,0,0,16">
+            <Grid RowDefinitions="Auto,Auto">
+
+                <!-- 标题行 -->
+                <TextBlock Grid.Row="0"
+                           Text="模板管理"
+                           Classes="SubtitleTextBlock"
+                           Margin="0,0,0,12" />
+
+                <!-- 操作按钮 -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                    <Button Content="新建模板"
+                            Command="{Binding NewTemplateCommand}"
+                            Classes="PrimaryButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Button Content="应用模板"
+                            Command="{Binding ApplyTemplateCommand}"
+                            Classes="AccentButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Button Content="编辑"
+                            Command="{Binding EditTemplateCommand}"
+                            Classes="SecondaryButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Button Content="删除"
+                            Command="{Binding DeleteTemplateCommand}"
+                            Classes="DangerButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Separator Width="1" Height="24" />
+
+                    <Button Content="导入"
+                            Command="{Binding ImportTemplateCommand}"
+                            Classes="SecondaryButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Button Content="导出"
+                            Command="{Binding ExportTemplateCommand}"
+                            Classes="SecondaryButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+
+                    <Separator Width="1" Height="24" />
+
+                    <Button Content="刷新"
+                            Command="{Binding RefreshCommand}"
+                            Classes="IconButton">
+                        <Button.IsEnabled>
+                            <Binding Path="!IsBusy" />
+                        </Button.IsEnabled>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <!-- 模板列表 -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+
+            <Grid RowDefinitions="*,Auto">
+
+                <!-- 列表内容 -->
+                <ListBox Grid.Row="0"
+                         ItemsSource="{Binding Templates}"
+                         SelectedItem="{Binding SelectedTemplate}"
+                         Background="Transparent"
+                         Margin="8">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource CardBackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="16"
+                                    Margin="0,4">
+
+                                <Grid RowDefinitions="Auto,Auto,Auto">
+
+                                    <!-- 模板名称 -->
+                                    <TextBlock Grid.Row="0"
+                                               Text="{Binding Name}"
+                                               Classes="SubtitleTextBlock"
+                                               FontWeight="SemiBold"
+                                               Margin="0,0,0,8" />
+
+                                    <!-- 模板描述 -->
+                                    <TextBlock Grid.Row="1"
+                                               Text="{Binding Description}"
+                                               Classes="BodyTextBlock"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,0,0,8" />
+
+                                    <!-- 创建日期 -->
+                                    <TextBlock Grid.Row="2"
+                                               Classes="CaptionTextBlock"
+                                               Foreground="{StaticResource TextSecondaryBrush}">
+                                        <Run Text="创建日期: " />
+                                        <Run Text="{Binding CreatedDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                                             FontWeight="Medium" />
+                                    </TextBlock>
+
+                                </Grid>
+
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- 底部统计 -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,0,0"
+                        Padding="16,8">
+                    <TextBlock Classes="CaptionTextBlock"
+                               VerticalAlignment="Center">
+                        <Run Text="模板总数: " />
+                        <Run Text="{Binding Templates.Count}" FontWeight="Bold" />
+                    </TextBlock>
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>

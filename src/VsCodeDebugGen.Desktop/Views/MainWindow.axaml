@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="VsCodeDebugGen.Desktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="{Binding Title}"
+        Width="1200" Height="800"
+        MinWidth="800" MinHeight="600">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 顶部菜单栏 -->
+        <Menu Grid.Row="0" Background="{StaticResource SurfaceBrush}">
+            <MenuItem Header="文件">
+                <MenuItem Header="退出" Command="{Binding ExitCommand}" />
+            </MenuItem>
+            <MenuItem Header="帮助">
+                <MenuItem Header="关于" Command="{Binding AboutCommand}" />
+            </MenuItem>
+        </Menu>
+
+        <!-- 主内容区域 - 使用 TabControl -->
+        <TabControl Grid.Row="1"
+                    SelectedIndex="{Binding SelectedTabIndex}"
+                    Margin="0"
+                    Padding="8">
+
+            <!-- 项目扫描标签页 -->
+            <TabItem Header="项目扫描">
+                <ContentControl x:Name="ProjectScanViewContent" />
+            </TabItem>
+
+            <!-- 配置标签页 -->
+            <TabItem Header="配置">
+                <ContentControl x:Name="ConfigurationViewContent" />
+            </TabItem>
+
+            <!-- 日志标签页 -->
+            <TabItem Header="日志">
+                <ContentControl x:Name="LogViewContent" />
+            </TabItem>
+
+        </TabControl>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource DividerBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,8">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="就绪"
+                           VerticalAlignment="Center"
+                           Classes="CaptionTextBlock" />
+                <TextBlock Grid.Column="1"
+                           Text="v3.0.0"
+                           VerticalAlignment="Center"
+                           Classes="CaptionTextBlock" />
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

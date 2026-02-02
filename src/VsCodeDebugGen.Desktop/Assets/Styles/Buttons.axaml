@@ -1,0 +1,135 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 主要按钮样式 -->
+    <Style Selector="Button.PrimaryButton">
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="Button.PrimaryButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.PrimaryButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource PrimaryPressedBrush}" />
+    </Style>
+
+    <Style Selector="Button.PrimaryButton:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource TextDisabledBrush}" />
+        <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+    <!-- 次要按钮样式 -->
+    <Style Selector="Button.SecondaryButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+    </Style>
+
+    <Style Selector="Button.SecondaryButton:pointerover">
+        <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="Button.SecondaryButton:pressed">
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="Button.SecondaryButton:disabled">
+        <Setter Property="BorderBrush" Value="{StaticResource TextDisabledBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextDisabledBrush}" />
+        <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+    <!-- 危险按钮样式 -->
+    <Style Selector="Button.DangerButton">
+        <Setter Property="Background" Value="{StaticResource ErrorBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="Button.DangerButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#B52E31" />
+    </Style>
+
+    <Style Selector="Button.DangerButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#A02325" />
+    </Style>
+
+    <!-- 成功按钮样式 -->
+    <Style Selector="Button.SuccessButton">
+        <Setter Property="Background" Value="{StaticResource SuccessBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="Button.SuccessButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#0E6A0E" />
+    </Style>
+
+    <Style Selector="Button.SuccessButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#0C580C" />
+    </Style>
+
+    <!-- 图标按钮样式 -->
+    <Style Selector="Button.IconButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+    </Style>
+
+    <Style Selector="Button.IconButton:pointerover">
+        <Setter Property="Background" Value="{StaticResource HoverBackgroundBrush}" />
+    </Style>
+
+    <Style Selector="Button.IconButton:pressed">
+        <Setter Property="Background" Value="{StaticResource BorderBrush}" />
+    </Style>
+
+    <!-- 链接按钮样式 -->
+    <Style Selector="Button.LinkButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style Selector="Button.LinkButton:pointerover">
+        <Setter Property="Foreground" Value="{StaticResource PrimaryHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.LinkButton:pressed">
+        <Setter Property="Foreground" Value="{StaticResource PrimaryPressedBrush}" />
+    </Style>
+
+</Styles>

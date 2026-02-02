@@ -1,0 +1,213 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.HistoryView"
+             x:DataType="vm:HistoryViewModel">
+
+    <Design.DataContext>
+        <vm:HistoryViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="16">
+
+        <!-- 顶部标题 -->
+        <Border Grid.Row="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,0,0,12">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+
+                <TextBlock Grid.Column="0"
+                           Text="历史记录"
+                           Classes="SubtitleTextBlock"
+                           VerticalAlignment="Center" />
+
+                <Button Grid.Column="1"
+                        Content="重新生成"
+                        Command="{Binding RegenerateCommand}"
+                        Classes="AccentButton"
+                        Margin="0,0,8,0">
+                    <Button.IsEnabled>
+                        <Binding Path="!IsBusy" />
+                    </Button.IsEnabled>
+                </Button>
+
+                <Button Grid.Column="2"
+                        Content="删除"
+                        Command="{Binding DeleteEntryCommand}"
+                        Classes="DangerButton"
+                        Margin="0,0,8,0">
+                    <Button.IsEnabled>
+                        <Binding Path="!IsBusy" />
+                    </Button.IsEnabled>
+                </Button>
+
+                <Button Grid.Column="3"
+                        Content="清空历史"
+                        Command="{Binding ClearHistoryCommand}"
+                        Classes="DangerButton">
+                    <Button.IsEnabled>
+                        <Binding Path="!IsBusy" />
+                    </Button.IsEnabled>
+                </Button>
+
+            </Grid>
+        </Border>
+
+        <!-- 搜索框 -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,0,0,16">
+            <Grid ColumnDefinitions="*,Auto">
+
+                <TextBox Grid.Column="0"
+                         Text="{Binding FilterText}"
+                         Watermark="搜索历史记录 (路径、项目名称...)"
+                         VerticalAlignment="Center"
+                         Margin="0,0,8,0" />
+
+                <Button Grid.Column="1"
+                        Content="搜索"
+                        Command="{Binding SearchCommand}"
+                        Classes="SecondaryButton" />
+
+            </Grid>
+        </Border>
+
+        <!-- 历史记录列表 -->
+        <Border Grid.Row="2"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+
+            <Grid RowDefinitions="*,Auto">
+
+                <!-- 使用 DataGrid 显示历史记录 -->
+                <ScrollViewer Grid.Row="0">
+                    <ListBox ItemsSource="{Binding FilteredHistory}"
+                             SelectedItem="{Binding SelectedEntry}"
+                             Background="Transparent"
+                             Margin="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource CardBackgroundBrush}"
+                                        BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="16"
+                                        Margin="0,4">
+
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+                                        <!-- 时间戳和状态 -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}"
+                                                       Classes="SubtitleTextBlock"
+                                                       FontWeight="SemiBold" />
+
+                                            <Border Grid.Column="1"
+                                                    CornerRadius="3"
+                                                    Padding="8,4">
+                                                <Border.Background>
+                                                    <SolidColorBrush>
+                                                        <SolidColorBrush.Color>
+                                                            <MultiBinding>
+                                                                <Binding Path="Status" />
+                                                            </MultiBinding>
+                                                        </SolidColorBrush.Color>
+                                                    </SolidColorBrush>
+                                                </Border.Background>
+                                                <TextBlock Text="{Binding Status}"
+                                                           Foreground="White"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- 搜索路径 -->
+                                        <TextBlock Grid.Row="1"
+                                                   Classes="BodyTextBlock"
+                                                   Margin="0,0,0,4">
+                                            <Run Text="搜索路径: " Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <Run Text="{Binding SearchPath}" FontWeight="Medium" />
+                                        </TextBlock>
+
+                                        <!-- 项目路径 -->
+                                        <TextBlock Grid.Row="2"
+                                                   Classes="BodyTextBlock"
+                                                   Margin="0,0,0,4">
+                                            <Run Text="项目路径: " Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <Run Text="{Binding ProjectPath}" FontWeight="Medium" />
+                                        </TextBlock>
+
+                                        <!-- 输出路径 -->
+                                        <TextBlock Grid.Row="3"
+                                                   Classes="BodyTextBlock"
+                                                   Margin="0,0,0,4">
+                                            <Run Text="输出路径: " Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <Run Text="{Binding OutputPath}" FontWeight="Medium" />
+                                        </TextBlock>
+
+                                        <!-- 项目信息 -->
+                                        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="16">
+                                            <TextBlock Classes="CaptionTextBlock"
+                                                       Foreground="{StaticResource TextSecondaryBrush}">
+                                                <Run Text="项目数量: " />
+                                                <Run Text="{Binding ProjectCount}" FontWeight="Bold" />
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <!-- 错误消息（如果有） -->
+                                        <TextBlock Grid.Row="5"
+                                                   IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                   Text="{Binding ErrorMessage}"
+                                                   Classes="CaptionTextBlock"
+                                                   Foreground="Red"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,8,0,0" />
+
+                                    </Grid>
+
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+
+                <!-- 底部统计 -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,0,0"
+                        Padding="16,8">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock Classes="CaptionTextBlock"
+                                   VerticalAlignment="Center">
+                            <Run Text="显示: " />
+                            <Run Text="{Binding FilteredHistory.Count}" FontWeight="Bold" />
+                            <Run Text=" / " />
+                            <Run Text="{Binding History.Count}" FontWeight="Bold" />
+                            <Run Text=" 条记录" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,126 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             xmlns:converters="using:VsCodeDebugGen.Desktop.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.LogView"
+             x:DataType="vm:LogViewModel">
+
+    <UserControl.Resources>
+        <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
+    </UserControl.Resources>
+
+    <Design.DataContext>
+        <vm:LogViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+
+        <!-- 顶部标题 -->
+        <Border Grid.Row="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,0,0,16">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+
+                <TextBlock Grid.Column="0"
+                           Text="日志记录"
+                           Classes="SubtitleTextBlock"
+                           VerticalAlignment="Center" />
+
+                <Button Grid.Column="1"
+                        Content="刷新"
+                        Command="{Binding RefreshCommand}"
+                        Classes="SecondaryButton"
+                        MinWidth="80"
+                        Margin="0,0,8,0" />
+
+                <Button Grid.Column="2"
+                        Content="导出"
+                        Command="{Binding ExportCommand}"
+                        Classes="SecondaryButton"
+                        MinWidth="80"
+                        Margin="0,0,8,0" />
+
+                <Button Grid.Column="3"
+                        Content="清空"
+                        Command="{Binding ClearCommand}"
+                        Classes="DangerButton"
+                        MinWidth="80" />
+
+            </Grid>
+        </Border>
+
+        <!-- 日志列表 -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Logs}" Margin="8">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource CardBackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    Padding="12,8">
+                                <Grid ColumnDefinitions="Auto,*">
+
+                                    <!-- 时间戳和级别 -->
+                                    <StackPanel Grid.Column="0"
+                                                Orientation="Horizontal"
+                                                Margin="0,0,16,0">
+                                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss}'}"
+                                                   Classes="CaptionTextBlock"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Margin="0,0,8,0" />
+                                        <Border Background="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                CornerRadius="3"
+                                                Padding="6,2"
+                                                Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Level}"
+                                                       Foreground="White"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold" />
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- 日志消息 -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Message}"
+                                               TextWrapping="Wrap"
+                                               Classes="BodyTextBlock"
+                                               VerticalAlignment="Center" />
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 底部统计 -->
+        <Border Grid.Row="2"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16,8"
+                Margin="0,16,0,0">
+            <TextBlock Classes="CaptionTextBlock"
+                       VerticalAlignment="Center">
+                <Run Text="总日志数: " />
+                <Run Text="{Binding Logs.Count}" FontWeight="Bold" />
+            </TextBlock>
+        </Border>
+
+    </Grid>
+
+</UserControl>

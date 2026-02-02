@@ -1,0 +1,28 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="VsCodeDebugGen.Desktop.App"
+             xmlns:local="using:VsCodeDebugGen.Desktop"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <!-- 引入颜色资源 -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://VsCodeDebugGen/Assets/Styles/Colors.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- 引入自定义样式 -->
+        <StyleInclude Source="avares://VsCodeDebugGen/Assets/Styles/Buttons.axaml" />
+        <StyleInclude Source="avares://VsCodeDebugGen/Assets/Styles/TextBlocks.axaml" />
+    </Application.Styles>
+</Application>

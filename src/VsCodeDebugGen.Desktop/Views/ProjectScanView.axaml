@@ -1,0 +1,178 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             xmlns:converters="using:VsCodeDebugGen.Desktop.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.ProjectScanView"
+             x:DataType="vm:ProjectScanViewModel">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:ProjectTypeToIconConverter x:Key="ProjectTypeToIconConverter" />
+    </UserControl.Resources>
+
+    <Design.DataContext>
+        <vm:ProjectScanViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+
+        <!-- 顶部搜索区域 -->
+        <Border Grid.Row="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,0,0,16">
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto,Auto">
+
+                <!-- 标题 -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                           Text="扫描项目文件"
+                           Classes="SubtitleTextBlock"
+                           Margin="0,0,0,12" />
+
+                <!-- 路径输入框 -->
+                <TextBox Grid.Row="1" Grid.Column="0"
+                         Text="{Binding SearchPath}"
+                         Watermark="选择要扫描的项目文件夹..."
+                         Margin="0,0,8,0"
+                         IsEnabled="{Binding !IsScanning}" />
+
+                <!-- 浏览按钮 -->
+                <Button Grid.Row="1" Grid.Column="1"
+                        Content="浏览"
+                        Command="{Binding BrowseCommand}"
+                        Classes="SecondaryButton"
+                        Margin="0,0,8,0"
+                        Width="100"
+                        IsEnabled="{Binding !IsScanning}" />
+
+                <!-- 扫描按钮 -->
+                <Button Grid.Row="1" Grid.Column="2"
+                        Content="扫描"
+                        Command="{Binding ScanCommand}"
+                        Classes="PrimaryButton"
+                        Width="100"
+                        IsEnabled="{Binding !IsScanning}" />
+
+            </Grid>
+        </Border>
+
+        <!-- 项目列表区域 -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <Grid RowDefinitions="Auto,*">
+
+                <!-- 工具栏 -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        BorderBrush="{StaticResource DividerBrush}"
+                        BorderThickness="0,0,0,1"
+                        Padding="16,12">
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Classes="BodyTextBlock">
+                            <Run Text="找到 " />
+                            <Run Text="{Binding FoundProjectCount}" FontWeight="Bold" />
+                            <Run Text=" 个项目" />
+                        </TextBlock>
+
+                        <Button Grid.Column="1"
+                                Content="全选"
+                                Command="{Binding SelectAllCommand}"
+                                Classes="SecondaryButton"
+                                MinWidth="80"
+                                Margin="0,0,8,0" />
+
+                        <Button Grid.Column="2"
+                                Content="取消全选"
+                                Command="{Binding DeselectAllCommand}"
+                                Classes="SecondaryButton"
+                                MinWidth="90"
+                                Margin="0,0,8,0" />
+
+                        <Button Grid.Column="3"
+                                Content="清空"
+                                Command="{Binding ClearCommand}"
+                                Classes="SecondaryButton"
+                                MinWidth="80" />
+                    </Grid>
+                </Border>
+
+                <!-- 项目列表 -->
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Projects}" Margin="8">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource CardBackgroundBrush}"
+                                        BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12"
+                                        Margin="0,4">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                                        <!-- 复选框 -->
+                                        <CheckBox Grid.Column="0"
+                                                  IsChecked="{Binding IsSelected}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,12,0" />
+
+                                        <!-- 项目信息 -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ProjectName}"
+                                                       Classes="BodyTextBlock"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding ProjectPath}"
+                                                       Classes="CaptionTextBlock"
+                                                       Margin="0,4,0,0" />
+                                        </StackPanel>
+
+                                        <!-- 项目类型图标 -->
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding ProjectType, Converter={StaticResource ProjectTypeToIconConverter}}"
+                                                   FontSize="24"
+                                                   VerticalAlignment="Center" />
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+            </Grid>
+        </Border>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16,12"
+                Margin="0,16,0,0"
+                IsVisible="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid ColumnDefinitions="Auto,*">
+                <TextBlock Grid.Column="0"
+                           Text="⏳ 正在扫描..."
+                           Classes="BodyTextBlock"
+                           VerticalAlignment="Center"
+                           Margin="0,0,16,0" />
+                <ProgressBar Grid.Column="1"
+                             IsIndeterminate="True"
+                             VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</UserControl>

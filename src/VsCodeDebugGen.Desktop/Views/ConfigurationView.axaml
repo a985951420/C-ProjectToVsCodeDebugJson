@@ -1,0 +1,146 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="VsCodeDebugGen.Desktop.Views.ConfigurationView"
+             x:DataType="vm:ConfigurationViewModel">
+
+    <Design.DataContext>
+        <vm:ConfigurationViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="16">
+
+            <!-- 标题 -->
+            <TextBlock Grid.Row="0"
+                       Text="配置设置"
+                       Classes="TitleTextBlock"
+                       Margin="0,0,0,24" />
+
+            <!-- 端口配置 -->
+            <Border Grid.Row="1"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16"
+                    Margin="0,0,0,16">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+
+                    <!-- 标题 -->
+                    <TextBlock Grid.Row="0"
+                               Text="端口配置"
+                               Classes="SubtitleTextBlock"
+                               Margin="0,0,0,16" />
+
+                    <!-- 端口范围 -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="0,0,0,12">
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="起始端口"
+                                       Classes="LabelTextBlock" />
+                            <NumericUpDown Value="{Binding StartPort}"
+                                           Minimum="1"
+                                           Maximum="65535"
+                                           Increment="1"
+                                           IsEnabled="{Binding !IsBusy}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="结束端口"
+                                       Classes="LabelTextBlock" />
+                            <NumericUpDown Value="{Binding EndPort}"
+                                           Minimum="1"
+                                           Maximum="65535"
+                                           Increment="1"
+                                           IsEnabled="{Binding !IsBusy}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 自动递增 -->
+                    <CheckBox Grid.Row="2"
+                              IsChecked="{Binding AutoIncrement}"
+                              Content="自动递增端口号"
+                              Margin="0,0,0,12"
+                              IsEnabled="{Binding !IsBusy}" />
+
+                    <!-- 说明 -->
+                    <TextBlock Grid.Row="3"
+                               Text="自动递增：为每个项目自动分配不同的端口号，避免端口冲突。"
+                               Classes="CaptionTextBlock"
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+
+                </Grid>
+            </Border>
+
+            <!-- 输出配置 -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16"
+                    Margin="0,0,0,16">
+                <Grid RowDefinitions="Auto,Auto,Auto">
+
+                    <!-- 标题 -->
+                    <TextBlock Grid.Row="0"
+                               Text="输出配置"
+                               Classes="SubtitleTextBlock"
+                               Margin="0,0,0,16" />
+
+                    <!-- 输出路径 -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,12">
+                        <TextBlock Text="输出路径"
+                                   Classes="LabelTextBlock" />
+                        <TextBox Text="{Binding OutputPath}"
+                                 Watermark=".vscode"
+                                 IsEnabled="{Binding !IsBusy}" />
+                    </StackPanel>
+
+                    <!-- 说明 -->
+                    <TextBlock Grid.Row="2"
+                               Text="配置文件将保存到项目根目录下的此路径中（默认: .vscode）"
+                               Classes="CaptionTextBlock"
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+
+                </Grid>
+            </Border>
+
+            <!-- 操作按钮 -->
+            <Border Grid.Row="3"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                    <Button Content="重置为默认"
+                            Command="{Binding ResetCommand}"
+                            Classes="SecondaryButton"
+                            Margin="0,0,8,0"
+                            IsEnabled="{Binding !IsBusy}" />
+
+                    <Button Content="保存配置"
+                            Command="{Binding SaveCommand}"
+                            Classes="SuccessButton"
+                            Margin="0,0,8,0"
+                            IsEnabled="{Binding !IsBusy}" />
+
+                    <Button Content="生成配置"
+                            Command="{Binding GenerateCommand}"
+                            Classes="PrimaryButton"
+                            IsEnabled="{Binding !IsBusy}" />
+
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>
