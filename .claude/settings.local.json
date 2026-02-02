@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(chmod:*)",
+      "Bash(dotnet pack:*)",
+      "Bash(dotnet tool:*)",
+      "Bash(vscodegen:*)",
+      "Bash(tree:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\n🎉 v2.0.0 - 企业级架构重构和功能升级\n\n## 重大更新\n\n### 架构重构\n- ✨ 采用企业级分层架构（Core/Infrastructure/CLI）\n- ✨ 完全遵循 SOLID 原则\n- ✨ 引入依赖注入和接口抽象\n- ✨ 清晰的职责分离和模块化设计\n\n### 新增功能\n- ✨ 命令行参数支持（--path, --output, --include, --exclude）\n- ✨ 交互式模式（美化的用户界面，emoji 和进度提示）\n- ✨ 非交互式模式（适合 CI/CD 集成）\n- ✨ JSON 格式配置文件持久化\n- ✨ 项目过滤功能（包含/排除）\n- ✨ 统一的错误处理机制\n- ✨ 详细日志模式（--verbose）\n- ✨ 帮助系统（--help）和版本信息（--version）\n\n### 全局工具支持\n- 📦 配置为 dotnet global tool\n- 📦 工具命令名：vscodegen\n- 📦 支持一键安装/卸载\n\n### 文档完善\n- 📚 完整的 README.md\n- 📚 快速开始指南（QUICK_START.md）\n- 📚 项目总结（PROJECT_SUMMARY.md）\n- 📚 环境配置说明（ENVIRONMENT_SETUP.md）\n- 📚 完成说明文档\n\n### 安装脚本\n- 🔧 Windows 安装脚本（install.bat）\n- 🔧 Linux/macOS 安装脚本（install.sh）\n- 🔧 卸载脚本（uninstall.bat）\n\n### 技术改进\n- 🏗️ 代码行数从 ~500 增加到 ~1500\n- 🏗️ 文件从 6 个增加到 20+ 个\n- 🏗️ 类型安全（sealed 类和 required 属性）\n- 🏗️ 空引用安全（Nullable reference types）\n- 🏗️ 完整的 XML 文档注释\n\n## 破坏性变更\n- 旧的单文件架构已重构为分层架构\n- 配置文件从文本格式迁移到 JSON 格式（自动迁移）\n\n## 迁移指南\n旧版本配置会自动迁移到新格式，无需手动操作\n\n## 安装使用\n```bash\n# Windows\ninstall.bat\n\n# Linux/macOS\nchmod +x install.sh && ./install.sh\n\n# 使用\nvscodegen --help\n```\n\nCloses: #架构重构 #功能升级 #全局工具\nEOF\n\\)\")",
+      "Bash(git tag:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(findstr:*)",
+      "Bash(dotnet new install:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet sln add:*)",
+      "Bash(tasklist:*)"
+    ]
+  }
+}
