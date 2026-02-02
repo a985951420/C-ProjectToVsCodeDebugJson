@@ -26,7 +26,7 @@ public class ConfigurationViewModel : ViewModelBase
     private int _startPort = 5000;
     private int _endPort = 5999;
     private bool _autoIncrement = true;
-    private string _outputPath = ".vscode";
+    private string _outputPath = string.Empty;
 
     /// <summary>
     /// 起始端口
@@ -299,12 +299,14 @@ public class ConfigurationViewModel : ViewModelBase
             }
 
             // 生成配置文件
-            _configGenerator.Generate(projectInfos, OutputPath, basePath);
+            var actualOutputPath = string.IsNullOrWhiteSpace(OutputPath) ? basePath : OutputPath;
+            _configGenerator.Generate(projectInfos, actualOutputPath, basePath);
 
-            _loggingService.Log($"配置文件已成功生成到: {basePath}", Models.LogLevel.Success);
+            var vscodeDir = System.IO.Path.Combine(actualOutputPath, ".vscode");
+            _loggingService.Log($"配置文件已成功生成到: {vscodeDir}", Models.LogLevel.Success);
             await _dialogService.ShowInformationAsync(
                 $"成功为 {projectInfos.Count} 个项目生成配置文件！\n\n" +
-                $"配置文件位置: {System.IO.Path.Combine(basePath, OutputPath)}\n" +
+                $"配置文件位置: {vscodeDir}\n" +
                 $"生成的文件: launch.json, tasks.json",
                 "生成成功");
         }
