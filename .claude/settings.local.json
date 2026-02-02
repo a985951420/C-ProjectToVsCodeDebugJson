@@ -21,7 +21,8 @@
       "Bash(dotnet sln:*)",
       "Bash(dotnet sln add:*)",
       "Bash(tasklist:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(dotnet add:*)"
     ]
   }
 }
