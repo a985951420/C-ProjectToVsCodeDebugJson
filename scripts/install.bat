@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 安装脚本
 REM 此脚本将打包并安装工具到全局环境
 

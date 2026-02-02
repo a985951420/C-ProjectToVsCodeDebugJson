@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - CLI 命令行启动脚本
 REM 用于运行 CLI 命令行工具
 

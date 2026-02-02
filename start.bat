@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 主启动脚本
 REM 选择启动 CLI 或桌面应用
 

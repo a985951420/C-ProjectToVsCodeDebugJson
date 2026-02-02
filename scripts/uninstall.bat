@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 卸载脚本
 
 echo ========================================

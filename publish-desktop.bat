@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 桌面应用打包脚本
 REM 将桌面应用发布为独立的可执行文件
 

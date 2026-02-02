@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 桌面应用启动脚本
 REM 用于运行 Avalonia 桌面应用（开发模式）
 

@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM VSCode Debug Generator - 桌面应用构建脚本
 REM 快速构建桌面应用（不打包，用于测试）
 
