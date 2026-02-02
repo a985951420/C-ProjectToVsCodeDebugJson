@@ -1,24 +1,24 @@
 @echo off
-chcp 65001 >nul
-REM VSCode Debug Generator - 卸载脚本
+chcp 65001 >nul 2>&1
+REM VSCode Debug Generator - Uninstall Script
 
 echo ========================================
-echo VSCode Debug Generator 卸载脚本
+echo VSCode Debug Generator Uninstall Script
 echo ========================================
 echo.
 
-echo 正在卸载全局工具...
+echo Uninstalling global tool...
 dotnet tool uninstall --global VsCodeDebugGen
 
 if errorlevel 1 (
-    echo 错误: 卸载失败或工具未安装
+    echo ERROR: Uninstallation failed or tool not installed
     pause
     exit /b 1
 )
 
 echo.
 echo ========================================
-echo ✓ 卸载完成！
+echo Uninstallation complete!
 echo ========================================
 echo.
 pause

@@ -1,48 +1,48 @@
 @echo off
-chcp 65001 >nul
-REM VSCode Debug Generator - 桌面应用启动脚本
-REM 用于运行 Avalonia 桌面应用（开发模式）
+chcp 65001 >nul 2>&1
+REM VSCode Debug Generator - Desktop Application Launcher
+REM Run Avalonia Desktop Application (Development Mode)
 
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo VSCode Debug Generator - 桌面应用
+echo VSCode Debug Generator - Desktop App
 echo ========================================
 echo.
 
-REM 检查 .NET 是否安装
+REM Check if .NET is installed
 where dotnet >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [错误] 未找到 .NET SDK，请先安装 .NET 8.0 或更高版本
-    echo 下载地址: https://dotnet.microsoft.com/download
+    echo [ERROR] .NET SDK not found, please install .NET 8.0 or higher
+    echo Download: https://dotnet.microsoft.com/download
     pause
     exit /b 1
 )
 
-REM 设置项目路径
+REM Set project path
 set DESKTOP_PROJECT=%~dp0src\VsCodeDebugGen.Desktop\VsCodeDebugGen.Desktop.csproj
 
-REM 检查项目文件是否存在
+REM Check if project file exists
 if not exist "%DESKTOP_PROJECT%" (
-    echo [错误] 未找到桌面应用项目文件: %DESKTOP_PROJECT%
+    echo [ERROR] Desktop project file not found: %DESKTOP_PROJECT%
     pause
     exit /b 1
 )
 
-echo [信息] 正在启动桌面应用...
-echo [提示] 首次运行可能需要还原 NuGet 包，请稍候...
+echo [INFO] Starting desktop application...
+echo [TIP] First run may take time to restore NuGet packages, please wait...
 echo.
 
-REM 运行桌面应用
+REM Run desktop application
 dotnet run --project "%DESKTOP_PROJECT%"
 
 if %ERRORLEVEL% neq 0 (
     echo.
-    echo [错误] 桌面应用启动失败
+    echo [ERROR] Desktop application failed to start
     pause
     exit /b %ERRORLEVEL%
 )
 
 echo.
-echo [完成] 桌面应用已关闭
+echo [DONE] Desktop application closed
 pause
