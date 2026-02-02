@@ -1,5 +1,6 @@
 using System.Text;
 using VsCodeDebugGen.Core.Interfaces;
+using VsCodeDebugGen.Core.Models;
 
 namespace VsCodeDebugGen.CLI.UI;
 
@@ -12,17 +13,20 @@ public class InteractiveUI
     private readonly IProjectParser _projectParser;
     private readonly IConfigGenerator _configGenerator;
     private readonly IConfigurationService _configService;
+    private readonly IProjectGrouper _projectGrouper;
 
     public InteractiveUI(
         IProjectFinder projectFinder,
         IProjectParser projectParser,
         IConfigGenerator configGenerator,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        IProjectGrouper projectGrouper)
     {
         _projectFinder = projectFinder;
         _projectParser = projectParser;
         _configGenerator = configGenerator;
         _configService = configService;
+        _projectGrouper = projectGrouper;
     }
 
     /// <summary>
@@ -44,11 +48,17 @@ public class InteractiveUI
                 Directory.GetCurrentDirectory(),
                 "留空则使用当前目录");
 
-            // 2. 获取输出路径
+            // 确保searchPath是绝对路径
+            searchPath = Path.GetFullPath(searchPath);
+
+            // 2. 获取输出路径（默认使用项目搜索路径）
             string outputPath = GetInput(
                 "请输入 .vscode 目录的保存路径",
-                Directory.GetCurrentDirectory(),
-                "留空则使用当前目录");
+                searchPath,
+                "留空则使用项目搜索路径");
+
+            // 确保outputPath是绝对路径
+            outputPath = Path.GetFullPath(outputPath);
 
             Console.WriteLine();
             Console.WriteLine("正在查找项目文件...");
@@ -134,6 +144,35 @@ public class InteractiveUI
     private List<string> SelectProjects(List<string> allProjects)
     {
         Console.WriteLine();
+        Console.WriteLine("选择项目模式:");
+        Console.WriteLine("  [1] 按编号选择（逐个选择项目）");
+        Console.WriteLine("  [2] 按分组选择（批量选择相似项目）");
+        Console.WriteLine("  [3] 选择全部项目");
+        Console.Write("> ");
+
+        string modeInput = Console.ReadLine()?.Trim() ?? "1";
+
+        if (modeInput == "3" || modeInput.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("✓ 已选择所有项目");
+            return allProjects;
+        }
+
+        if (modeInput == "2")
+        {
+            return SelectProjectsByGroup(allProjects);
+        }
+
+        // 默认: 按编号选择
+        return SelectProjectsByNumber(allProjects);
+    }
+
+    /// <summary>
+    /// 按编号选择项目
+    /// </summary>
+    private List<string> SelectProjectsByNumber(List<string> allProjects)
+    {
+        Console.WriteLine();
         Console.WriteLine("找到的项目:");
         Console.WriteLine();
 
@@ -210,5 +249,93 @@ public class InteractiveUI
         }
 
         return selected;
+    }
+
+    /// <summary>
+    /// 按分组选择项目
+    /// </summary>
+    private List<string> SelectProjectsByGroup(List<string> allProjects)
+    {
+        Console.WriteLine();
+        Console.WriteLine("正在分析项目...");
+
+        // 自动分组
+        var groups = _projectGrouper.GroupProjects(allProjects);
+
+        if (!groups.Any())
+        {
+            Console.WriteLine("无法分组，返回所有项目");
+            return allProjects;
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"项目已分为 {groups.Count} 个组:");
+        Console.WriteLine();
+
+        // 显示分组列表
+        for (int i = 0; i < groups.Count; i++)
+        {
+            var group = groups[i];
+            Console.WriteLine($"  [{i + 1}] {group.GroupName} ({group.Count} 个项目)");
+            Console.WriteLine($"      模式: {group.Pattern}");
+
+            // 显示该组的前3个项目作为示例
+            var sampleProjects = group.Projects.Take(3).ToList();
+            foreach (var project in sampleProjects)
+            {
+                Console.WriteLine($"      - {Path.GetFileNameWithoutExtension(project)}");
+            }
+            if (group.Projects.Count > 3)
+            {
+                Console.WriteLine($"      ... 和其他 {group.Projects.Count - 3} 个项目");
+            }
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("请选择要包含的分组:");
+        Console.WriteLine("  - 输入分组编号（多个用逗号分隔，如: 1,3）");
+        Console.WriteLine("  - 输入 'all' 选择所有分组");
+        Console.Write("> ");
+
+        string input = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        // 选择所有
+        if (input.Equals("all", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(input))
+        {
+            Console.WriteLine("✓ 已选择所有分组");
+            return allProjects;
+        }
+
+        // 按分组编号选择
+        var selected = new List<string>();
+        var indices = input.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var indexStr in indices)
+        {
+            if (int.TryParse(indexStr.Trim(), out int index) && index > 0 && index <= groups.Count)
+            {
+                selected.AddRange(groups[index - 1].Projects);
+            }
+        }
+
+        if (selected.Any())
+        {
+            Console.WriteLine($"✓ 已选择 {selected.Count} 个项目（来自 {indices.Length} 个分组）");
+
+            // 保存到配置
+            var projectNames = selected
+                .Select(Path.GetFileName)
+                .Where(n => !string.IsNullOrEmpty(n))
+                .Cast<string>()
+                .ToList();
+            _configService.SaveIncludeList(projectNames);
+        }
+        else
+        {
+            Console.WriteLine("未选择任何分组，将使用所有项目");
+            return allProjects;
+        }
+
+        return selected.Distinct().ToList();
     }
 }

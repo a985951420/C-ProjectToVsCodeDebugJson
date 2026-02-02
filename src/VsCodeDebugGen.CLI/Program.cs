@@ -18,6 +18,7 @@ class Program
         IProjectParser projectParser = new ProjectParserService();
         IConfigGenerator configGenerator = new ConfigGeneratorService();
         IConfigurationService configService = new ConfigurationService();
+        IProjectGrouper projectGrouper = new ProjectGrouperService();
 
         // 解析命令行参数
         var parser = new CommandLineParser();
@@ -41,7 +42,7 @@ class Program
             // 交互模式
             if (options.Interactive)
             {
-                var ui = new InteractiveUI(projectFinder, projectParser, configGenerator, configService);
+                var ui = new InteractiveUI(projectFinder, projectParser, configGenerator, configService, projectGrouper);
                 ui.Run();
             }
             // 非交互模式

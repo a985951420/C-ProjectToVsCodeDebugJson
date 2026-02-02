@@ -36,4 +36,9 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VsCodeDebugGen.Core\VsCodeDebugGen.Core.csproj" />
+    <ProjectReference Include="..\VsCodeDebugGen.Infrastructure\VsCodeDebugGen.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
