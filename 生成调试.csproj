@@ -1,10 +1,39 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- 全局工具配置 -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>vscodegen</ToolCommandName>
+    <PackageId>VsCodeDebugGen</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>VSCode Debug Configuration Generator for C# Projects - 为 C# 项目生成 VSCode 调试配置文件的命令行工具</Description>
+    <Copyright>Copyright © 2025</Copyright>
+    <PackageProjectUrl>https://github.com/your-repo/vscodegen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/your-repo/vscodegen</RepositoryUrl>
+    <PackageTags>vscode;debug;csharp;dotnet;tool;generator</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- 发布配置 -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <PublishTrimmed>false</PublishTrimmed>
+
+    <!-- 程序集信息 -->
+    <AssemblyName>vscodegen</AssemblyName>
+    <RootNamespace>VsCodeDebugGen</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
 </Project>
