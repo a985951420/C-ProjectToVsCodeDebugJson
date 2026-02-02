@@ -15,6 +15,7 @@
 
     <!-- 背景色 -->
     <Color x:Key="BackgroundColor">#F3F3F3</Color>
+    <Color x:Key="BackgroundAltColor">#F0F0F0</Color>
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
     <Color x:Key="CardBackgroundColor">#FAFAFA</Color>
     <Color x:Key="HoverBackgroundColor">#F0F0F0</Color>
@@ -45,6 +46,7 @@
     <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="BackgroundAltBrush" Color="{StaticResource BackgroundAltColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" />
     <SolidColorBrush x:Key="HoverBackgroundBrush" Color="{StaticResource HoverBackgroundColor}" />

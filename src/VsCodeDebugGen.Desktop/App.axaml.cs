@@ -42,6 +42,7 @@ public partial class App : Application
 
         // 注册 UI 层服务
         services.AddSingleton<ILoggingService, LoggingService>();
+        services.AddSingleton<IClipboardService, ClipboardService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<ITemplateService, TemplateService>();
         services.AddSingleton<IHistoryService, HistoryService>();

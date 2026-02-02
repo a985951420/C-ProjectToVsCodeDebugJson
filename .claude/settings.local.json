@@ -22,7 +22,9 @@
       "Bash(dotnet sln add:*)",
       "Bash(tasklist:*)",
       "Bash(git mv:*)",
-      "Bash(dotnet add:*)"
+      "Bash(dotnet add:*)",
+      "Bash(dotnet --version:*)",
+      "Bash(dotnet list:*)"
     ]
   }
 }

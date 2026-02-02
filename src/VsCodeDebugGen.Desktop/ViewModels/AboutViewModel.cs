@@ -17,6 +17,7 @@ namespace VsCodeDebugGen.Desktop.ViewModels;
 public class AboutViewModel : ViewModelBase
 {
     private readonly ILoggingService _loggingService;
+    private readonly IClipboardService _clipboardService;
     private ObservableCollection<DocumentItem> _documents = new();
     private DocumentItem? _selectedDocument;
     private string _documentContent = string.Empty;
@@ -61,17 +62,25 @@ public class AboutViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
     /// <summary>
+    /// 复制文档内容命令
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> CopyContentCommand { get; }
+
+    /// <summary>
     /// 初始化关于页面 ViewModel
     /// </summary>
     /// <param name="loggingService">日志服务</param>
-    public AboutViewModel(ILoggingService loggingService)
+    /// <param name="clipboardService">剪贴板服务</param>
+    public AboutViewModel(ILoggingService loggingService, IClipboardService clipboardService)
     {
         _loggingService = loggingService;
+        _clipboardService = clipboardService;
 
         Title = "关于";
 
         // 初始化命令
         RefreshCommand = ReactiveCommand.CreateFromTask(LoadDocumentsAsync);
+        CopyContentCommand = ReactiveCommand.CreateFromTask(CopyContentToClipboardAsync);
 
         // 加载文档列表
         _ = LoadDocumentsAsync();
@@ -219,6 +228,28 @@ public class AboutViewModel : ViewModelBase
             "TASK_PROGRESS" => "任务进度",
             _ => nameWithoutExt
         };
+    }
+
+    /// <summary>
+    /// 复制文档内容到剪贴板
+    /// </summary>
+    private async Task CopyContentToClipboardAsync()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(DocumentContent))
+            {
+                _loggingService.Log("没有内容可以复制", LogLevel.Warning);
+                return;
+            }
+
+            await _clipboardService.SetTextAsync(DocumentContent);
+            _loggingService.Log("文档内容已复制到剪贴板", LogLevel.Info);
+        }
+        catch (Exception ex)
+        {
+            _loggingService.Log($"复制到剪贴板失败: {ex.Message}", LogLevel.Error);
+        }
     }
 }
 

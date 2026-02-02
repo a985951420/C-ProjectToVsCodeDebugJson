@@ -72,13 +72,20 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,0,1"
                         Padding="16,12">
-                    <Grid ColumnDefinitions="*,Auto">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding SelectedDocument.DisplayName, FallbackValue='欢迎'}"
                                    Classes="SubtitleTextBlock"
                                    VerticalAlignment="Center" />
 
-                        <TextBlock Grid.Column="1"
+                        <Button Grid.Column="1"
+                                Content="📋 复制全文"
+                                Command="{Binding CopyContentCommand}"
+                                Classes="SecondaryButton"
+                                Margin="0,0,8,0"
+                                IsEnabled="{Binding !IsBusy}" />
+
+                        <TextBlock Grid.Column="2"
                                    Text="{Binding SelectedDocument.FileName, FallbackValue=''}"
                                    Classes="CaptionTextBlock"
                                    Foreground="{StaticResource TextSecondaryBrush}"
@@ -87,9 +94,9 @@
                 </Border>
 
                 <!-- 文档内容区域 -->
-                <Border Grid.Row="1" Padding="16">
-                    <md:MarkdownScrollViewer Markdown="{Binding DocumentContent}" />
-                </Border>
+                <md:MarkdownScrollViewer Grid.Row="1"
+                                       Markdown="{Binding DocumentContent}"
+                                       Margin="16" />
 
             </Grid>
         </Border>
