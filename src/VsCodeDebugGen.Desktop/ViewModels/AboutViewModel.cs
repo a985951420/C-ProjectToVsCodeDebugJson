@@ -91,6 +91,7 @@ public class AboutViewModel : ViewModelBase
 
             // 获取程序根目录
             var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var projectRoot = appDirectory;
             var docsDirectory = Path.Combine(appDirectory, "docs");
 
             // 如果 docs 目录不存在于发布目录，尝试查找源代码目录
@@ -105,31 +106,41 @@ public class AboutViewModel : ViewModelBase
 
                 if (currentDir != null)
                 {
-                    docsDirectory = Path.Combine(currentDir.FullName, "docs");
+                    projectRoot = currentDir.FullName;
+                    docsDirectory = Path.Combine(projectRoot, "docs");
                 }
             }
 
-            if (!Directory.Exists(docsDirectory))
+            // 首先添加根目录的 README.md
+            var readmePath = Path.Combine(projectRoot, "README.md");
+            if (File.Exists(readmePath))
             {
-                _loggingService.Log($"文档目录不存在: {docsDirectory}", LogLevel.Warning);
-                DocumentContent = "# 文档目录不存在\n\n无法找到 docs 目录，请检查程序安装是否完整。";
-                return;
-            }
-
-            // 读取所有 md 文件
-            var mdFiles = Directory.GetFiles(docsDirectory, "*.md", SearchOption.AllDirectories);
-
-            foreach (var filePath in mdFiles.OrderBy(f => f))
-            {
-                var fileName = Path.GetFileName(filePath);
-                var displayName = GetDisplayName(fileName);
-
                 Documents.Add(new DocumentItem
                 {
-                    FileName = fileName,
-                    DisplayName = displayName,
-                    FilePath = filePath
+                    FileName = "README.md",
+                    DisplayName = "📖 项目说明",
+                    FilePath = readmePath
                 });
+            }
+
+            // 如果 docs 目录存在，读取所有 md 文件
+            if (Directory.Exists(docsDirectory))
+            {
+                // 读取所有 md 文件
+                var mdFiles = Directory.GetFiles(docsDirectory, "*.md", SearchOption.AllDirectories);
+
+                foreach (var filePath in mdFiles.OrderBy(f => f))
+                {
+                    var fileName = Path.GetFileName(filePath);
+                    var displayName = GetDisplayName(fileName);
+
+                    Documents.Add(new DocumentItem
+                    {
+                        FileName = fileName,
+                        DisplayName = displayName,
+                        FilePath = filePath
+                    });
+                }
             }
 
             _loggingService.Log($"已加载 {Documents.Count} 个文档", LogLevel.Info);

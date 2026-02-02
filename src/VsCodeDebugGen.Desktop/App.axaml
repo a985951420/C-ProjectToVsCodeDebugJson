@@ -24,5 +24,6 @@
         <!-- 引入自定义样式 -->
         <StyleInclude Source="avares://VsCodeDebugGen/Assets/Styles/Buttons.axaml" />
         <StyleInclude Source="avares://VsCodeDebugGen/Assets/Styles/TextBlocks.axaml" />
+        <StyleInclude Source="avares://VsCodeDebugGen/Assets/Styles/Markdown.axaml" />
     </Application.Styles>
 </Application>

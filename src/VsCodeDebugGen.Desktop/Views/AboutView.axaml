@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:VsCodeDebugGen.Desktop.ViewModels"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="VsCodeDebugGen.Desktop.Views.AboutView"
              x:DataType="vm:AboutViewModel">
@@ -86,16 +87,9 @@
                 </Border>
 
                 <!-- 文档内容区域 -->
-                <ScrollViewer Grid.Row="1"
-                              Padding="16"
-                              HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Auto">
-                    <SelectableTextBlock Text="{Binding DocumentContent}"
-                                        TextWrapping="Wrap"
-                                        FontFamily="Consolas,Courier New,monospace"
-                                        FontSize="13"
-                                        LineHeight="20" />
-                </ScrollViewer>
+                <Border Grid.Row="1" Padding="16">
+                    <md:MarkdownScrollViewer Markdown="{Binding DocumentContent}" />
+                </Border>
 
             </Grid>
         </Border>
