@@ -69,12 +69,24 @@ public class ConfigGeneratorService : IConfigGenerator
         string programPath = $"${{workspaceFolder}}{relativeDir}/{project.OutputPath}/{project.AssemblyName}.dll"
             .Replace("\\", "/");
 
+        var env = new Dictionary<string, string>
+        {
+            { "ASPNETCORE_ENVIRONMENT", "Development" }
+        };
+
+        // 如果配置了端口，添加 ASPNETCORE_URLS 环境变量
+        if (project.Port.HasValue)
+        {
+            env["ASPNETCORE_URLS"] = $"http://localhost:{project.Port.Value}";
+        }
+
         return new LaunchConfiguration
         {
             Name = project.LaunchName,
             Program = programPath,
             PreLaunchTask = project.LaunchName,
             Cwd = $"${{workspaceFolder}}{relativeDir}".Replace("\\", "/"),
+            Env = env,
             SourceFileMap = new Dictionary<string, string>
             {
                 { "/Views", $"${{workspaceFolder}}{relativeDir}/Views".Replace("\\", "/") }

@@ -31,6 +31,11 @@ public sealed class ProjectInfo
     public required string OutputPath { get; init; }
 
     /// <summary>
+    /// 端口号（用于 Web 应用程序）
+    /// </summary>
+    public int? Port { get; init; }
+
+    /// <summary>
     /// VSCode 调试配置名称
     /// </summary>
     public string LaunchName => $"Launch {AssemblyName}";

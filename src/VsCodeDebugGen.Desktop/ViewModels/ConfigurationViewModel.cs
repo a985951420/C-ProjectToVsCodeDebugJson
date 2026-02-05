@@ -298,9 +298,42 @@ public class ConfigurationViewModel : ViewModelBase
                 return;
             }
 
+            // 为项目分配端口号
+            var projectInfosWithPorts = new System.Collections.Generic.List<VsCodeDebugGen.Core.Models.ProjectInfo>();
+            int currentPort = StartPort;
+
+            foreach (var projectInfo in projectInfos)
+            {
+                // 创建带端口号的新ProjectInfo对象
+                var projectInfoWithPort = new VsCodeDebugGen.Core.Models.ProjectInfo
+                {
+                    CsprojFile = projectInfo.CsprojFile,
+                    OutputType = projectInfo.OutputType,
+                    TargetFramework = projectInfo.TargetFramework,
+                    AssemblyName = projectInfo.AssemblyName,
+                    OutputPath = projectInfo.OutputPath,
+                    Port = AutoIncrement ? currentPort : (int?)null
+                };
+
+                projectInfosWithPorts.Add(projectInfoWithPort);
+
+                // 如果启用自动递增，递增端口号
+                if (AutoIncrement)
+                {
+                    currentPort++;
+                    if (currentPort > EndPort)
+                    {
+                        _loggingService.Log($"端口号已超过结束范围 {EndPort}，剩余项目将不分配端口", Models.LogLevel.Warning);
+                        break;
+                    }
+                }
+
+                _loggingService.Log($"为项目 {projectInfo.AssemblyName} 分配端口: {projectInfoWithPort.Port?.ToString() ?? "无"}", Models.LogLevel.Info);
+            }
+
             // 生成配置文件
             var actualOutputPath = string.IsNullOrWhiteSpace(OutputPath) ? basePath : OutputPath;
-            _configGenerator.Generate(projectInfos, actualOutputPath, basePath);
+            _configGenerator.Generate(projectInfosWithPorts, actualOutputPath, basePath);
 
             var vscodeDir = System.IO.Path.Combine(actualOutputPath, ".vscode");
             _loggingService.Log($"配置文件已成功生成到: {vscodeDir}", Models.LogLevel.Success);
