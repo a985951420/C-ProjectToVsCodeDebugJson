@@ -71,7 +71,8 @@ public class ConfigGeneratorService : IConfigGenerator
 
         var env = new Dictionary<string, string>
         {
-            { "ASPNETCORE_ENVIRONMENT", "Development" }
+            { "ASPNETCORE_ENVIRONMENT", "Development" },
+            { "LOCAL_DEBUG","true"}
         };
 
         // 如果配置了端口，添加 ASPNETCORE_URLS 环境变量
